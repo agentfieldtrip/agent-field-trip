@@ -514,9 +514,20 @@ export class AgentFieldTrip {
       status,
       replayed: res.headers.get('idempotent-replayed') === 'true',
     };
-    const location = res.headers.get('location');
-    if (status === 202 && location) meta.reviewUrl = new URL(location, `${this.baseUrl}/`).toString();
+    const reviewUrl = status === 202 ? this.reviewUrlFrom(res.headers.get('location')) : undefined;
+    if (reviewUrl) meta.reviewUrl = reviewUrl;
     return { ...parsed, ...meta } as T & WriteMeta;
+  }
+
+  /** Absolute review URL from a 202 Location, only if it is visible ASCII and on the same origin as baseUrl. */
+  private reviewUrlFrom(location: string | null): string | undefined {
+    if (!location || !/^[!-~]{1,2048}$/.test(location)) return undefined;
+    try {
+      const url = new URL(location, `${this.baseUrl}/`);
+      return url.origin === new URL(this.baseUrl).origin ? url.toString() : undefined;
+    } catch {
+      return undefined;
+    }
   }
 
   private retryDelay(attempt: number, res?: Response): number {

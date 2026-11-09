@@ -30,6 +30,9 @@ from .errors import AgentFieldTripError, InvalidArgumentError
 
 __all__ = ["AgentFieldTrip", "WriteResult", "parse_sse", "__version__"]
 
+# A Location we accept: visible ASCII only (no spaces, control characters or escapes).
+_PRINTABLE_ASCII = re.compile(r"[!-~]{1,2048}")
+
 __version__ = "0.1.0"
 
 DEFAULT_BASE_URL = "https://agentfieldtrip.com"
@@ -441,14 +444,23 @@ class AgentFieldTrip:
             "POST", self._url(path), json_body=payload, idempotency_key=key, name_in_body=True
         )
         parsed = self._json(status, body)
-        location = hdrs.get("location")
         return WriteResult(
             parsed if isinstance(parsed, dict) else {"data": parsed},
             status=status,
             replayed=hdrs.get("idempotent-replayed", "").lower() == "true",
-            review_url=urljoin(self.base_url + "/", location) if location else None,
+            review_url=self._review_url(hdrs.get("location")),
             headers=hdrs,
         )
+
+    def _review_url(self, location: Optional[str]) -> Optional[str]:
+        """Absolute review URL from a 202 Location, only if clean and on the base_url origin."""
+        if not location or not _PRINTABLE_ASCII.fullmatch(location):
+            return None
+        absolute = urljoin(self.base_url + "/", location)
+        a, b = urlsplit(absolute), urlsplit(self.base_url)
+        if (a.scheme, a.netloc) != (b.scheme, b.netloc):
+            return None
+        return absolute
 
     # ------------------------------------------------------------------ reads
 

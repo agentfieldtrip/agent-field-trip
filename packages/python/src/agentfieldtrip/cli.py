@@ -372,5 +372,5 @@ def _print_write(a: argparse.Namespace, r: WriteResult) -> None:
         line += " (replayed: this answer was stored by an earlier identical request)"
     print(line)
     if r.review_url:
-        print(f"Review: {r.review_url}")
+        print(_clean(f"Review: {r.review_url}"))
     print(_clean(_dump(dict(r))))

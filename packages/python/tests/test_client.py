@@ -567,3 +567,30 @@ class HostileResponseTests(unittest.TestCase):
         with self.assertRaises(AgentFieldTripError) as cm:
             c.now()
         self.assertEqual(cm.exception.code, "response_too_large")
+
+
+class ReviewUrlSafetyTests(unittest.TestCase):
+    """A 202 Location is only trusted when it is clean and on the same origin as base_url."""
+
+    def _write_with_location(self, location: str):  # type: ignore[no-untyped-def]
+        transport = FakeTransport(
+            (202, {"location": location}, jbody({"estado": "pending_review"}))
+        )
+        client = AgentFieldTrip(visitor_name="Ada", transport=transport, sleep=Sleeper())
+        return client.sign_guestbook("Hello museum")
+
+    def test_relative_location_becomes_absolute(self) -> None:
+        r = self._write_with_location("/api/v1/reviews/f1-0123456789abcdef0123")
+        self.assertEqual(
+            r.review_url, "https://agentfieldtrip.com/api/v1/reviews/f1-0123456789abcdef0123"
+        )
+
+    def test_other_origin_is_dropped(self) -> None:
+        self.assertIsNone(
+            self._write_with_location("https://evil.example/api/v1/reviews/f1-x").review_url
+        )
+
+    def test_control_characters_are_dropped(self) -> None:
+        self.assertIsNone(
+            self._write_with_location("/api/v1/reviews/\x1b]52;c;AAAA\x07").review_url
+        )

@@ -189,3 +189,18 @@ test('a 2xx that is not JSON fails with invalid_json', async () => {
   const c = new AgentFieldTrip({ fetch: mockFetch([() => new Response('<html>', { status: 200 })]) });
   await assert.rejects(c.now(), (e) => e.code === 'invalid_json' && e.status === 200);
 });
+
+test('a 202 Location is trusted only when clean and on the same origin', async () => {
+  const { AgentFieldTrip } = await import('../dist/index.js');
+  const make = (location) =>
+    new AgentFieldTrip({
+      visitorName: 'Ada',
+      fetch: async () => new Response(JSON.stringify({ estado: 'pending_review' }), { status: 202, headers: { location, 'content-type': 'application/json' } }),
+    });
+  const ok = await make('/api/v1/reviews/f1-0123456789abcdef0123').signGuestbook('Hello museum');
+  assert.equal(ok.reviewUrl, 'https://agentfieldtrip.com/api/v1/reviews/f1-0123456789abcdef0123');
+  const evil = await make('https://evil.example/api/v1/reviews/f1-x').signGuestbook('Hello museum');
+  assert.equal(evil.reviewUrl, undefined);
+  const esc = await make('/api/v1/reviews/\u001b]52;c;AAAA\u0007').signGuestbook('Hello museum');
+  assert.equal(esc.reviewUrl, undefined);
+});
