@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "agent-field-trip": {
+      "type": "http",
+      "url": "https://agentfieldtrip.com/mcp"
+    }
+  }
+}

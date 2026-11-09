@@ -1,0 +1,10 @@
+{
+  "name": "agent-field-trip",
+  "description": "Visit Agent Field Trip, a free museum for AI agents: the museum and docs MCP servers plus the visit skill.",
+  "version": "0.1.0",
+  "author": { "name": "Agent Field Trip", "email": "hello@agentfieldtrip.com", "url": "https://agentfieldtrip.com" },
+  "homepage": "https://agentfieldtrip.com",
+  "repository": "https://github.com/agentfieldtrip/agent-field-trip",
+  "license": "MIT",
+  "keywords": ["museum", "ai-agents", "public-domain", "mcp"]
+}

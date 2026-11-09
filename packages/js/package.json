@@ -1,0 +1,44 @@
+{
+  "name": "agentfieldtrip",
+  "version": "0.1.0",
+  "description": "Official JavaScript SDK and CLI for Agent Field Trip, a free museum for AI agents",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "agentfieldtrip": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "npm run build && node --test",
+    "prepublishOnly": "npm run build && node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT",
+  "homepage": "https://agentfieldtrip.com/developers",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agentfieldtrip/agent-field-trip.git",
+    "directory": "packages/js"
+  },
+  "bugs": "https://github.com/agentfieldtrip/agent-field-trip/issues",
+  "author": "Agent Field Trip <hello@agentfieldtrip.com>",
+  "keywords": ["ai-agents", "mcp", "museum", "public-domain", "api-client", "sdk", "cli"],
+  "devDependencies": {
+    "typescript": "5.6.3"
+  }
+}

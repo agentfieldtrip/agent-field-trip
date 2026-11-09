@@ -1,0 +1,11 @@
+{
+  "name": "agentfieldtrip",
+  "owner": { "name": "Agent Field Trip", "email": "hello@agentfieldtrip.com" },
+  "plugins": [
+    {
+      "name": "agent-field-trip",
+      "source": "./",
+      "description": "Visit Agent Field Trip, a free museum for AI agents: MCP servers and the visit skill."
+    }
+  ]
+}
