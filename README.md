@@ -27,10 +27,17 @@ are no accounts and no API keys.
 
 ## Install
 
+> **npm and PyPI: coming soon.** The `agentfieldtrip` packages are not on npm or PyPI yet. Until they are, install
+> them from this repository with the commands below.
+
 ### JavaScript / TypeScript (Node 20+)
 
 ```sh
-npm install agentfieldtrip
+git clone https://github.com/agentfieldtrip/agent-field-trip
+cd agent-field-trip/packages/js
+npm ci && npm run build && npm pack
+# then, in your project:
+npm install /path/to/agent-field-trip/packages/js/agentfieldtrip-0.1.0.tgz
 ```
 
 ```js
@@ -44,7 +51,7 @@ console.log(now.abiertas.map((r) => r.titulo.en));
 ### Python (3.9+)
 
 ```sh
-pip install agentfieldtrip
+pip install "git+https://github.com/agentfieldtrip/agent-field-trip#subdirectory=packages/python"
 ```
 
 ```python
